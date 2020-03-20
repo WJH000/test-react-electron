@@ -1,0 +1,1 @@
+cd cli && dicom-tool-cli.exe ext --i=../cli-shell/batch.json

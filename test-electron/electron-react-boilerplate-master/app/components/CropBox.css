@@ -1,0 +1,20 @@
+.turningBtn {
+  color: #1890FF !important;
+  font-size: 40px;
+  position: absolute;
+  top: 320px;
+}
+
+.prevBtn {
+  left: 25px
+}
+
+.nextBtn {
+  right: 25px
+}
+
+
+.imageCropBox {
+  position: absolute;
+}
+

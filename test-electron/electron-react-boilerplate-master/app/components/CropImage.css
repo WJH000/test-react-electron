@@ -1,0 +1,18 @@
+.backButton {
+  position: absolute;
+}
+
+.counter {
+  position: absolute;
+  margin-top: 50px;
+  margin-left: 20px;
+}
+
+.btn {
+  margin-left: 5px;
+}
+
+.imageCropBox {
+  position: absolute;
+}
+

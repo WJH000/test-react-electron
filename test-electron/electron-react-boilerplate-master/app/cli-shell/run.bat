@@ -1,0 +1,1 @@
+../cli/dicom-tool-cli.exe ext --inputFile=./C0000005 --outputPath=./out --type=jpg --frame=all

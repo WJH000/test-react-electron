@@ -1,0 +1,14 @@
+[
+    {
+        "inputFile" : "../cli-shell/C0000005",
+        "outputPath" : "./c05-out",
+        "type" : "jpg",
+        "frame" : "1-10"
+    },
+    {
+        "inputFile" : "../cli-shell/I0000002",
+        "outputPath" : "./i02.bmp",
+        "type" : "bmp",
+        "frame" : "1"
+    }
+]
