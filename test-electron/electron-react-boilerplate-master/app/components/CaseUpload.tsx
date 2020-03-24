@@ -6,7 +6,7 @@ import { UploadOutlined } from '@ant-design/icons';
 import xlsx from 'node-xlsx';
 import { InboxOutlined, DeleteOutlined } from '@ant-design/icons';
 import { readDirectory, getFileContentByDir, getFileContentByDir2 } from '../utils/fileUtils';
-import CropBox from './CropBox';
+import CropBox from './CropBox/index';
 
 const fs = require('fs');
 const path = require('path');

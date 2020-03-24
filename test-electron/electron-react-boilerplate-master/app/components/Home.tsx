@@ -4,6 +4,7 @@ import routes from '../constants/routes.json';
 import styles from './Home.css';
 
 export default function Home() {
+  console.log('--home container--');
   return (
     <div className={styles.container} data-tid="container">
       <h2>Home</h2>

@@ -45,18 +45,17 @@
   overflow: auto;
 }
 
-.fileTree {
-  width: 60vw;
-  height: 40vh;
-  overflow: auto;
-  margin-top: 10px;
-  background: #fff;
-}
-
 .dragDropArea {
-  width: 100%;
-  height: 10vh;
+  width: 93vw;
+  height: 30vh;
+  overflow: auto;
   /*border: 1px dashed #FFF;*/
   margin-top: 10px;
   text-align: center;
+  color: #595959;
+}
+
+.opeIcon {
+  color: #1890FF;
+  font-size: 18px;
 }

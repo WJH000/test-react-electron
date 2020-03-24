@@ -6,13 +6,12 @@ import { configureStore, history } from './store/configureStore';
 import './app.global.css';
 
 const store = configureStore();
-console.log(1111111, process.cwd());
 const AppContainer = process.env.PLAIN_HMR ? Fragment : ReactHotAppContainer;
 
 document.addEventListener('DOMContentLoaded', () =>
   render(
     <AppContainer>
-      <Root store={store} history={history} />
+      <Root store={store} history={history}/>
     </AppContainer>,
     document.getElementById('root')
   )

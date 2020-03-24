@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import styles from './CropBox.css';
-import routes from '../constants/routes.json';
+import routes from '../../constants/routes.json';
 import { Annotation, EditableAnnotation, SubjectRect } from 'react-annotation';
 import { Button } from 'antd';
 import { LeftCircleOutlined, RightCircleOutlined } from '@ant-design/icons';
@@ -90,7 +90,6 @@ export default function CropBox(props) {
   // 翻页切换图片
   function changeImg(flag) {
     const newIndex = flag === -1 ? (currentIndex - 1 < 0 ? 0 : currentIndex - 1) : (currentIndex + 1 > files.length - 1 ? files.length - 1 : currentIndex + 1);
-    console.log('-93-newIndex--', newIndex);
     setCurrentIndex(newIndex);
     setCropFlag(false);
   }

@@ -23,10 +23,9 @@ export default function Login(props: Props) {
 
   const handleLogin = () => {
     console.log('--登录：--', username, password);
-    login(username, password, () => {
-      debugger;
-      history.push('/');
-    });
+    debugger;
+    history.push('/upload');
+    login(username, password);
   };
 
   const changeInputValue = (value, flag) => {
@@ -39,7 +38,7 @@ export default function Login(props: Props) {
   };
   return (
     <div className={styles.container}>
-      <h2>采集标注平台助手</h2>
+      <h2 style={{ color: '#000' }}>采集标注平台助手</h2>
       <div>
         <UserOutlined/>
         <Input allowClear placeholder={'用户名'} style={{ width: 250, margin: '20px 0 0 10px' }}
@@ -51,6 +50,13 @@ export default function Login(props: Props) {
                onChange={(e) => changeInputValue(e.target.value, 'password')}/>
         <br/>
         <Button onClick={handleLogin} type={'primary'} className={styles.loginBtn}>登 录</Button>
+      </div>
+      <div className={styles.demoBox}>
+        <Link to={routes.CROP}><span style={{ color: '#1890FF' }}>测试裁剪功能</span></Link>
+        <br/>
+        <Link to={routes.UPLOAD}><span style={{ color: '#1890FF' }}>测试上传Excel</span></Link>
+        <br/>
+        <Link to={routes.UPLOAD}><span style={{ color: '#1890FF' }}>解析dicom</span></Link>
       </div>
     </div>
   );
