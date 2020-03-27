@@ -56,7 +56,6 @@ export default function Login(props: Props) {
         <br/>
         <Link to={routes.UPLOAD}><span style={{ color: '#1890FF' }}>测试上传Excel</span></Link>
         <br/>
-        <Link to={routes.UPLOAD}><span style={{ color: '#1890FF' }}>解析dicom</span></Link>
       </div>
     </div>
   );

@@ -2,12 +2,15 @@ import React, { useState, useEffect, useRef, Fragment } from 'react';
 import { Link } from 'react-router-dom';
 import styles from './Upload.css';
 import routes from '../constants/routes.json';
-import { Upload as MyUpload, Button, Tree, message } from 'antd';
+import { Upload as MyUpload, Button, Input, message } from 'antd';
 import { UploadOutlined, CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
 import xlsx from 'node-xlsx';
+import { getFileType } from '../utils/fileUtils';
 
 const fs = require('fs');
-let path = require('path');
+const { exec } = require('child_process');
+const path = require('path');
+const archiver = require('archiver');
 
 type Props = {
   testGetFileToUpload: () => void;
@@ -18,13 +21,13 @@ export default function Upload(props: Props) {
   const [excelName, setExcelName] = useState('');
   const [activeCell, setActiveCell] = useState([-1, -1, -1]);
   const [activeContent, setActiveContent] = useState('');
+  const [fileCache, setFileCache] = useState([]);
   useEffect(() => {
   }, [activeCell]);
   const excelProps = {
     onRemove: file => {
     },
     beforeUpload: file => {
-      debugger;
       var excelList = xlsx.parse(file.path);
       const maxCols = excelList[0]['data'][0].length || 45;
       // 封装表格数据
@@ -68,6 +71,119 @@ export default function Upload(props: Props) {
     fs.writeFileSync(`${__dirname}/excels/${excelName}`, buffer, { 'flag': 'w' });//生成excel the_content是excel的名字，大家可以随意命名
   }
 
+  function parseDICOMFromJson() {
+    exec('cd cli && dicom-tool-cli.exe ext --i=../cli-shell/batch.json',
+      // exec(path.join(__dirname + '/cli-shell/run-batch.bat'),
+      { cwd: __dirname }, (err, stdout, stderr) => {
+        if (err) {
+          console.log(iconv.decode(err, 'cp936'));
+          return;
+        }
+        if (!stderr && !stderr) console.log('dicom解析成功');
+      });
+  }
+
+  function createFolder() {
+    let dirName = `folder_${new Date().getFullYear()}`;
+    var fileName = path.join(__dirname, `./temp/${dirName}`);
+    fs.mkdir(fileName, { recursive: true }, (err) => {
+      if (err) {
+        throw err;
+      } else {
+        console.log('create folder ok!');
+      }
+    });
+  }
+
+  function createFile() {
+    let dirName = `file_${new Date().getFullYear()}`;
+    var fileName = path.join(__dirname, `./temp/${dirName}.json`);
+    const jsonData = JSON.stringify([
+      {
+        'inputFile': '../cli-shell/image-000010.dcm',
+        'outputPath': './image-000010.bmp',
+        'type': 'bmp',
+        'frame': '1'
+      },
+      {
+        'inputFile': '../cli-shell/NM-MONO2-16-13x-heart.dcm',
+        'outputPath': './NM-MONO2-16-13x-heart.bmp',
+        'type': 'bmp',
+        'frame': '1'
+      }
+    ], '', '\t');
+
+    fs.writeFile(fileName, jsonData, 'utf8', function(error) {
+      if (error) {
+        console.log(error);
+        return false;
+      }
+      console.log('file写入成功');
+    });
+  }
+
+  function uploadFileChange(e) {
+    e.preventDefault();
+    const files = e.target.files;
+    const cache = handleFilesProcess(files);
+    debugger;
+    if (cache && cache.length) {
+      console.log(cache);
+      setFileCache(cache);
+    }
+  }
+
+
+  // 处理文件
+  function handleFilesProcess(files) {
+    const cache = [];
+    Array.prototype.forEach.call(files, file => {
+      const { name, path } = file;
+      getFileType(path, function(type) {
+        cache.push({
+          name,
+          path,
+          type
+        });
+      });
+    });
+    return cache;
+  }
+
+  // 打包文件
+  function zipFile(e) {
+    e.preventDefault();
+    debugger;
+    if (fileCache.length > 0) {
+      var output = fs.createWriteStream(__dirname + '/testZip.zip');
+      var archive = archiver('zip', {
+        store: true,
+        zlib: { level: 9 }
+      });
+
+      output.on('close', function() {
+        console.log(archive.pointer() + ' total bytes');
+        console.log('archiver has been finalized and the output file descriptor has closed.');
+      });
+
+      archive.on('error', function(err) {
+        throw err;
+      });
+
+      archive.pipe(output);
+      fileCache.forEach(item => {
+        debugger;
+        const { name, path, type } = item;
+        if (type === 'file') {
+          archive.append(fs.createReadStream(path), { name });
+        } else {
+          archive.directory(path, name);
+        }
+      });
+      archive.finalize();
+    }
+  }
+
   return (
     <div>
       <div className={styles.backButton} data-tid="backButton">
@@ -76,13 +192,20 @@ export default function Upload(props: Props) {
         </Link>
       </div>
       <div className={styles.uploadBox}>
-        <h3>测试上传Excel</h3>
+        <h3>测试文件操作</h3>
         <div>
-          <Button type="primary" style={{ marginRight: 5 }}>解析dicom文件</Button>
+          <Button type="primary" onClick={parseDICOMFromJson} className={styles.commonBtn}>解析dicom文件</Button>
+          <Button type="primary" onClick={createFolder} className={styles.commonBtn}>创建文件夹</Button>
+          <Button type="primary" onClick={createFile} className={styles.commonBtn}>创建JSON文件</Button>
           <MyUpload {...excelProps}>
             <Button type="primary">上传xlsx</Button>
           </MyUpload>
-          <Button onClick={writeExcel.bind(this, excelData)}>生成Excel</Button>
+          <Button disabled={!excelName} onClick={writeExcel.bind(this, excelData)}>生成Excel</Button>
+          {/*拖拽上传*/}
+          <Input type="file" id="upload-file-btn" multiple onChange={uploadFileChange}/>
+          {/*打包文件*/}
+          <Button onClick={zipFile} type="primary">打包文件</Button>
+          <br/><br/>
         </div>
         <div className={styles.dragDropArea}>
           {excelData && excelData.length > 0 && excelData.map((sheet, sIndex) => {

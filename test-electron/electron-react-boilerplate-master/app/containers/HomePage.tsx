@@ -1,6 +1,7 @@
 import React from 'react';
 import { bindActionCreators, Dispatch } from 'redux';
 import Login from '../components/Login';
+import CaseUpload from '../components/CaseUpload';
 import { connect } from 'react-redux';
 import { counterStateType } from '../reducers/types';
 import {
@@ -20,4 +21,4 @@ function mapDispatchToProps(dispatch: Dispatch) {
   );
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Login);
+export default connect(mapStateToProps, mapDispatchToProps)(CaseUpload);

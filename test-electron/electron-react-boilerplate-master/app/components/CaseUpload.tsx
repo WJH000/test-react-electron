@@ -5,9 +5,18 @@ import { Upload, Tree, Tabs, Button, Row, Col, Steps, Modal, message } from 'ant
 import { UploadOutlined } from '@ant-design/icons';
 import xlsx from 'node-xlsx';
 import { InboxOutlined, DeleteOutlined } from '@ant-design/icons';
-import { readDirectory, getFileContentByDir, getFileContentByDir2 } from '../utils/fileUtils';
+import {
+  readDirectory,
+  getDirTree,
+  getFileContentByDir,
+  getFileContentByDir2,
+  readFileList
+} from '../utils/fileUtils';
 import CropBox from './CropBox/index';
 
+const JSZIP = require('jszip');
+
+let zip = new JSZIP();
 const fs = require('fs');
 const path = require('path');
 const { TabPane } = Tabs;
@@ -19,6 +28,7 @@ export default function CaseUpload() {
   const [fileList, setFileList] = useState([]);
   // 文件树数组
   const [gData, setGData] = useState([]);
+  const [treeObjData, setTreeObjData] = useState({});
   const [showDragger, setShowDragger] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
   // 扁平化文件数据（包含文件内存路径和buffer）
@@ -36,9 +46,13 @@ export default function CaseUpload() {
       if (fileList && fileList.length) {
         const path = fileList[0].path;
         const dirList = myReadDir(path, fileList[0]);
-        // console.log('dirList:    ', dirList);
+        // 测试读取文件目录
+        // const treeObj = getDirTree(path);
+        // console.log('--treeObj--', treeObj);
+        console.log('dirList:    ', dirList);
         setTimeout(() => {
           setGData([dirList]);
+          // setTreeObjData(treeObj);
           setShowDragger(false);
         }, 2000);
       }
@@ -102,6 +116,12 @@ export default function CaseUpload() {
                 <div>
                   {DragableTree(TreeRef, gData)}
                 </div>
+                {/*测试自己生成树状结构*/}
+                <div>
+                  <span>测试自己生成树状结构</span>
+                  {treeObjData && treeObjData.childDir &&
+                  renderTreeData(treeObjData.childDir)}
+                </div>
               </div>
 
             </TabPane>
@@ -135,7 +155,6 @@ export default function CaseUpload() {
         <CropBox files={fileContentList}/>
       </Modal>
     </div>
-
   );
 }
 
@@ -262,6 +281,26 @@ const DragableTree = (TreeRef, gData) => {
       gDatas={gDatas}
       ref={TreeRef}
     />
+  );
+};
+
+const renderTreeData = (treeList, level = 1) => {
+  const keys = [];
+  for (var key in treeList) {
+    keys.push(key);
+  }
+  return (
+    <div>{
+      keys && keys.map((key, index) => {
+        return (
+          <div style={{ marginLeft: 10 * level }}>
+            <span>{treeList[key] ? treeList[key].name : key}</span>
+            {treeList[key] && treeList[key].childDir &&
+            <div>{renderTreeData(treeList[key].childDir, level + 1)}</div>}
+          </div>
+        );
+      })
+    }</div>
   );
 };
 

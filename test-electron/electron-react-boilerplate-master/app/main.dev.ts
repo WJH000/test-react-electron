@@ -14,6 +14,9 @@ import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
 
+const ipc = require('electron').ipcMain;
+const dialog = require('electron').dialog;
+
 export default class AppUpdater {
   constructor() {
     log.transports.file.level = 'info';
@@ -61,11 +64,11 @@ const createWindow = async () => {
     webPreferences:
       process.env.NODE_ENV === 'development' || process.env.E2E_BUILD === 'true'
         ? {
-            nodeIntegration: true
-          }
+          nodeIntegration: true
+        }
         : {
-            preload: path.join(__dirname, 'dist/renderer.prod.js')
-          }
+          preload: path.join(__dirname, 'dist/renderer.prod.js')
+        }
   });
 
   mainWindow.loadURL(`file://${__dirname}/app.html`);
@@ -115,4 +118,22 @@ app.on('activate', () => {
   // On macOS it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
   if (mainWindow === null) createWindow();
+});
+
+ipc.on('openDicomFile', (event, arg) => {
+  console.log('--openDicomFile in ipc--');
+  let startPath = '';
+  if (process.platform === 'darwin') {
+    startPath = '/Users/<username>/';
+  }
+  dialog.showOpenDialog({
+    title: 'Select a dicom file...',
+    properties: ['openFile'],
+    defaultPath: startPath,
+    buttonLabel: 'Select...'
+  }).then(result => {
+    event.sender.send('selectedDicomFile', result.filePaths);
+  }).catch(err => {
+    console.log(err);
+  });
 });

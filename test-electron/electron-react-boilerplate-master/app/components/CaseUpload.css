@@ -10,7 +10,8 @@
 .caseTab {
   border: 1px dashed #1890FF;
   border-radius: 3px;
-  height: 500px;
+  max-height: 500px;
+  overflow: auto;
 }
 
 .opeBox {

@@ -62,14 +62,13 @@ export default function CropBox(props) {
     if (imgObj.currentSrc.indexOf('/') > 0)//如果包含有"/"号 从最后一个"/"号+1的位置开始截取字符串
     {
       filename = imgObj.currentSrc.substring(imgObj.currentSrc.lastIndexOf('/') + 1, imgObj.currentSrc.length);
-
     } else {
       filename = imgObj.currentSrc;
     }
     extension = filename.substring(filename.lastIndexOf('.') + 1, filename.length);
     const fname = filename.substring(0, filename.indexOf('.'));
-    // console.log('-70-extension--', extension, '--tnCanvas.toDataURL()--', tnCanvas.toDataURL());
     // 缓存图片至本地
+    console.log('--缓存图片至本地--');
     const base64 = tnCanvas.toDataURL().replace(/^data:image\/\w+;base64,/, '');
     const dataBuffer = new Buffer(base64, 'base64');
     fs.writeFileSync(path.resolve(`app/images/test/${fname}.png`), dataBuffer, err => {
