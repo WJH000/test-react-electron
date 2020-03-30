@@ -11,6 +11,8 @@ const fs = require('fs');
 const { exec } = require('child_process');
 const path = require('path');
 const archiver = require('archiver');
+//ffmpeg 操作类
+const ffmpeg = require('ffmpeg');
 
 type Props = {
   testGetFileToUpload: () => void;
@@ -24,6 +26,13 @@ export default function Upload(props: Props) {
   const [fileCache, setFileCache] = useState([]);
   useEffect(() => {
   }, [activeCell]);
+
+  useEffect(() => {
+    const videoPath = path.join(__dirname, '/video2.mp4');
+   /* console.log('--测试解析视频--', videoPath);
+    getVideoTotalDuration(videoPath);*/
+  }, []);
+
   const excelProps = {
     onRemove: file => {
     },
@@ -182,6 +191,19 @@ export default function Upload(props: Props) {
       });
       archive.finalize();
     }
+  }
+
+  //获取视频时长(暂不生效)
+  function getVideoTotalDuration(videoPath) {
+    const process = new ffmpeg(videoPath);
+    return process.then(function(video) {
+      debugger;
+      console.log('getVideoTotalDuration,seconds:' + video.metadata.duration.seconds);
+      return video.metadata.duration.seconds || 0;
+    }, function(err) {
+      console.log('getVideoTotalDuration,err:' + err.message);
+      return -1;
+    });
   }
 
   return (

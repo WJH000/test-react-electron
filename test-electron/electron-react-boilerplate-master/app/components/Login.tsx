@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, Redirect, withRouter } from 'react-router-dom';
 import routes from '../constants/routes.json';
 import { Input, Button } from 'antd';
@@ -36,6 +36,7 @@ export default function Login(props: Props) {
       setPassword(value);
     }
   };
+
   return (
     <div className={styles.container}>
       <h2 style={{ color: '#000' }}>采集标注平台助手</h2>
@@ -54,7 +55,7 @@ export default function Login(props: Props) {
       <div className={styles.demoBox}>
         <Link to={routes.CROP}><span style={{ color: '#1890FF' }}>测试裁剪功能</span></Link>
         <br/>
-        <Link to={routes.UPLOAD}><span style={{ color: '#1890FF' }}>测试上传Excel</span></Link>
+        <Link to={routes.UPLOAD}><span style={{ color: '#1890FF' }}>测试文件操作</span></Link>
         <br/>
       </div>
     </div>
